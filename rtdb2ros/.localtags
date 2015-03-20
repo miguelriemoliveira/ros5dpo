@@ -1,0 +1,42 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+EXIT	src/rtdb2ros_node.cpp	/^bool EXIT = false;$/;"	v
+StampedTransform	src/rtdb2ros_node.cpp	/^	br.sendTransform(tf::StampedTransform(transform, ro.header.stamp, frame_id, child_frame_id));$/;"	p	file:	signature:(transform, ro.header.stamp, frame_id, child_frame_id)
+Vector3	src/rtdb2ros_node.cpp	/^	transform.setOrigin(tf::Vector3(odom.px, odom.py, 0.0));$/;"	p	file:	signature:(odom.px, odom.py, 0.0)
+WAIT	src/rtdb2ros_node.cpp	/^bool WAIT = true;$/;"	v
+agent_id	src/rtdb2ros_node.cpp	/^int agent_id;$/;"	v
+append	src/rtdb2ros_node.cpp	/^	child_frame_id.append(pname);$/;"	p	file:	signature:(pname)
+append	src/rtdb2ros_node.cpp	/^	frame_id.append(pname);$/;"	p	file:	signature:(pname)
+append	src/rtdb2ros_node.cpp	/^	node_name.append(pname);$/;"	p	file:	signature:(pname)
+append	src/rtdb2ros_node.cpp	/^	odom_topic.append(pname);$/;"	p	file:	signature:(pname)
+append	src/rtdb2ros_node.cpp	/^	velocity_cmd_topic.append(pname);$/;"	p	file:	signature:(pname)
+br	src/rtdb2ros_node.cpp	/^	static tf::TransformBroadcaster br;$/;"	l	file:
+child_frame_id	src/rtdb2ros_node.cpp	/^std::string child_frame_id;$/;"	v
+frame_id	src/rtdb2ros_node.cpp	/^std::string frame_id;$/;"	v
+init	src/rtdb2ros_node.cpp	/^	ros::init(argc, argv, node_name);$/;"	p	class:ros	file:	signature:(argc, argv, node_name)
+main	src/rtdb2ros_node.cpp	/^int main(int argc, char **argv)$/;"	f	signature:(int argc, char **argv)
+n	src/rtdb2ros_node.cpp	/^	ros::NodeHandle n;$/;"	l
+node_name	src/rtdb2ros_node.cpp	/^	std::string node_name = "rtdb_ros_translator_";$/;"	l
+odom	src/rtdb2ros_node.cpp	/^	CMD_Pos odom;$/;"	l
+odom_topic	src/rtdb2ros_node.cpp	/^	std::string odom_topic = "odom_";$/;"	l
+odometry_pub	src/rtdb2ros_node.cpp	/^ros::Publisher odometry_pub;$/;"	v
+pname	src/rtdb2ros_node.cpp	/^char pname[64] = "agent";$/;"	v
+publish	src/rtdb2ros_node.cpp	/^	odometry_pub.publish(ro);	$/;"	p	file:	signature:(ro)
+q	src/rtdb2ros_node.cpp	/^	geometry_msgs::Quaternion q = tf::createQuaternionMsgFromYaw(odom.pa);$/;"	l
+qtf	src/rtdb2ros_node.cpp	/^	tf::Quaternion qtf;$/;"	l
+ro	src/rtdb2ros_node.cpp	/^nav_msgs::Odometry ro; \/\/a ros format odom$/;"	v
+ros::init	src/rtdb2ros_node.cpp	/^	ros::init(argc, argv, node_name);$/;"	p	class:ros	file:	signature:(argc, argv, node_name)
+ros::spin	src/rtdb2ros_node.cpp	/^	ros::spin();$/;"	p	class:ros	file:	signature:()
+setRotation	src/rtdb2ros_node.cpp	/^	transform.setRotation(qtf);$/;"	p	file:	signature:(qtf)
+spin	src/rtdb2ros_node.cpp	/^	ros::spin();$/;"	p	class:ros	file:	signature:()
+sub	src/rtdb2ros_node.cpp	/^	ros::Subscriber sub = n.subscribe(velocity_cmd_topic, 100, velocityCommandCallback);$/;"	l
+timer	src/rtdb2ros_node.cpp	/^	ros::Timer timer = n.createTimer(ros::Duration(0.1), timerCallback);$/;"	l
+timerCallback	src/rtdb2ros_node.cpp	/^void timerCallback(const ros::TimerEvent& event)$/;"	f	signature:(const ros::TimerEvent& event)
+transform	src/rtdb2ros_node.cpp	/^	tf::Transform transform;$/;"	l
+vel	src/rtdb2ros_node.cpp	/^	CMD_Vel vel;$/;"	l
+velocityCommandCallback	src/rtdb2ros_node.cpp	/^void velocityCommandCallback(const geometry_msgs::Twist::ConstPtr& msg)$/;"	f	signature:(const geometry_msgs::Twist::ConstPtr& msg)
+velocity_cmd_topic	src/rtdb2ros_node.cpp	/^	std::string velocity_cmd_topic = "velocity_cmd_";$/;"	l

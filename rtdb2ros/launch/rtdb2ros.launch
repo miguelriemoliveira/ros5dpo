@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!-- Launches a race_3d_tracking node or nodelet. All possible parameters are listed below to serve as an example -->
+<launch>
+<arg name="agent_id" default="1"/>
+<!--<env name="LUCKY_NUMBER" value="13" />-->
+<env name="AGENT" value="$(arg agent_id)" />
+
+<group ns="$(arg agent_id)">
+    <node pkg="rtdb2ros" type="rtdb2ros_node" name="rtdb2ros_node" output="screen">
+
+       <!--Must use ~ in remappings so they are private-->
+    <!--<remap from="~point_cloud_in_topic" to="$(arg point_cloud_in_topic)"/>-->
+    <!--<remap from="~parent_frame_id" to="$(arg parent_frame_id)"/>-->
+
+    <!--param loading-->
+    <!--<param name="initial_object_pc_path" value="$(arg initial_object_pc_path)"/>-->
+    <!--<param name="~point_cloud_in_topic" value="$(arg point_cloud_in_topic)"/>-->
+    <!--<rosparam command="load" file="$(find race_3d_object_tracking)/params/default_params.yaml" />-->
+    </node>
+
+</group>
+
+</launch>	
