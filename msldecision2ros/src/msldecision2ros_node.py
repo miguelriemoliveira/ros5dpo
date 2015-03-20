@@ -2,11 +2,14 @@
 # license removed for brevity
 import rospy
 from geometry_msgs.msg import Twist
+from geometry_msgs.msg import PoseStamped
 from nav_msgs.msg import Odometry
 import socket
 import sys
 import numpy as np
 import math
+from tf.transformations import euler_from_quaternion
+#from tf.transformations import quaternion
  
 def ReceiveUDP():
     bdata = bytearray(4096)       
@@ -182,6 +185,8 @@ class CommandMotors:
 HOST = '127.0.0.1'   # Symbolic name meaning all available interfaces
 PORT = 5000 # Arbitrary non-privileged port
 SENDPORT = 5001 # Arbitrary non-privileged port
+SENDPORT_POSE = 5002 # Arbitrary non-privileged port
+SENDPORT_BALL = 5003 # Arbitrary non-privileged port
 cmd_motors = CommandMotors()
 odometry = CommandMotors()
 odometry.EncAbs[0] = np.uint16(0);
@@ -192,7 +197,37 @@ s = socket.socket()
 #s_send = socket.socket()
 pub = []
  
+def poseCallback(data):
+    msg = []
+    msg.append(round(data.pose.position.x,3))
+    msg.append(round(data.pose.position.y,3))
+    #quaternion q
+    q =  np.array([data.pose.orientation.x, data.pose.orientation.y, data.pose.orientation.z, data.pose.orientation.w])
+    (roll,pitch,yaw) = euler_from_quaternion(q);
+    msg.append(round(yaw,3))
+
+    msg_str = str(msg)
+    msg_str = msg_str[1:len(msg_str)-1]
+    s.sendto(msg_str , (HOST,SENDPORT_POSE))
+
+def ballPoseCallback(data):
+    msg = []
+    msg.append(round(data.pose.position.x,3))
+    msg.append(round(data.pose.position.y,3))
+    #quaternion q
+    q =  np.array([data.pose.orientation.x, data.pose.orientation.y, data.pose.orientation.z, data.pose.orientation.w])
+    (roll,pitch,yaw) = euler_from_quaternion(q);
+    msg.append(round(yaw,3))
+
+    #Remove the first and last elements []
+    msg_str = str(msg)
+    msg_str = msg_str[1:len(msg_str)-1]
+    s.sendto(msg_str , (HOST,SENDPORT_BALL))
+
+
+
 def odomCallback(data):
+    return #for now do nothing with the odom callback
     #rospy.loginfo(data)
     print "EncAbs " + str(odometry.EncAbs)
     #wait = input("PRESS ENTER TO CONTINUE.")
@@ -263,7 +298,7 @@ def initUDP():
         print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
         sys.exit()
          
-    print 'Socket bind complete'
+    print 'Socket bind complete. Listen port=' + str(PORT) + " send port=" + str(SENDPORT) + " send port_pose=" + str(SENDPORT_POSE) + " send port_ball=" + str(SENDPORT_BALL) 
 
     #try :
         #global s_send
@@ -288,12 +323,30 @@ def initROS():
     global pub
 
     rospy.init_node('msldecision2ros_node', anonymous=True)
+
+
+    ns = rospy.get_namespace()
+    print "namespace " + ns
+    agent_number = int(ns[1])
+    print "agent number " + str(agent_number)
+
+    global PORT
+    global SENDPORT 
+    PORT = 5000 + (agent_number-1)*10
+    SENDPORT = 5001  + (agent_number-1)*10
+    SENDPORT_POSE = 5002  + (agent_number-1)*10
+    SENDPORT_BALL = 5003  + (agent_number-1)*10
+
+
     pub = rospy.Publisher('velocity_cmd', Twist, queue_size=10)
     rospy.Subscriber("odom", Odometry, odomCallback)
+    rospy.Subscriber("pose_agent", PoseStamped, poseCallback)
+    rospy.Subscriber("pose_ball", PoseStamped, ballPoseCallback)
  
 def main():
-    initUDP()
     initROS()
+    initUDP()
+    
 
     rate = rospy.Rate(100) 
 

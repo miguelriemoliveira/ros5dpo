@@ -1,9 +1,6 @@
 <?xml version="1.0"?>
 <!-- Launches a race_3d_tracking node or nodelet. All possible parameters are listed below to serve as an example -->
 <launch>
-<arg name="agent_id" default="1"/>
-
-<group ns="$(arg agent_id)">
 
     <node pkg="msldecision2ros" type="msldecision2ros_node.py" name="msldecision2ros_node" output="screen">
 
@@ -16,6 +13,4 @@
     <!--<param name="~point_cloud_in_topic" value="$(arg point_cloud_in_topic)"/>-->
     <!--<rosparam command="load" file="$(find race_3d_object_tracking)/params/default_params.yaml" />-->
     </node>
-</group>
-
 </launch>	
