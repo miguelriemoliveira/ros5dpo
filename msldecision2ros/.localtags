@@ -1,0 +1,28 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+CommandMotors	src/msldecision2ros_node.py	/^class CommandMotors:$/;"	c	inherits:
+EncodedToW	src/msldecision2ros_node.py	/^    def EncodedToW(self):$/;"	m	class:CommandMotors	access:public
+HOST	src/msldecision2ros_node.py	/^HOST = '127.0.0.1'   # Symbolic name meaning all available interfaces$/;"	v
+KSamplePeriodRaw2Processed	src/msldecision2ros_node.py	/^    KSamplePeriodRaw2Processed=10; #Copied from Decision code$/;"	v	class:CommandMotors
+KTicks2Rad	src/msldecision2ros_node.py	/^    KTicks2Rad = 0.0005; #Copied from Decision code$/;"	v	class:CommandMotors
+PORT	src/msldecision2ros_node.py	/^PORT = 5000 # Arbitrary non-privileged port$/;"	v
+ReceiveUDP	src/msldecision2ros_node.py	/^def ReceiveUDP():$/;"	f	access:public
+UDPMsgToEncoded	src/msldecision2ros_node.py	/^    def UDPMsgToEncoded(self, msg):$/;"	m	class:CommandMotors	access:public
+WToVxVyVW	src/msldecision2ros_node.py	/^    def WToVxVyVW(self):$/;"	m	class:CommandMotors	access:public
+WheelToCenterDist	src/msldecision2ros_node.py	/^    WheelToCenterDist = 0.1885 #Copied from Decision code$/;"	v	class:CommandMotors
+WheelsRadius	src/msldecision2ros_node.py	/^    WheelsRadius = 0.0513 #Copied from Decision code$/;"	v	class:CommandMotors
+__str__	src/msldecision2ros_node.py	/^    def __str__(self):$/;"	m	class:CommandMotors	file:	access:private
+cmd_motors	src/msldecision2ros_node.py	/^cmd_motors = CommandMotors()$/;"	v
+encoded_w	src/msldecision2ros_node.py	/^    encoded_w = [0,0,0] #motor 1 velocity in ticks'$/;"	v	class:CommandMotors
+initROS	src/msldecision2ros_node.py	/^def initROS():$/;"	f	access:public
+initUDP	src/msldecision2ros_node.py	/^def initUDP():$/;"	f	access:public
+l	src/msldecision2ros_node.py	/^		l = [self.encoded_w, self.w, self.v]$/;"	v	class:CommandMotors
+main	src/msldecision2ros_node.py	/^def main():$/;"	f	access:public
+pub	src/msldecision2ros_node.py	/^pub = []$/;"	v
+s	src/msldecision2ros_node.py	/^s = socket.socket()$/;"	v
+v	src/msldecision2ros_node.py	/^    v = [0,0,0] #high level vx,vy,vw$/;"	v	class:CommandMotors
+w	src/msldecision2ros_node.py	/^    w = [0,0,0]  #motor 1 velocity in rad\/sec$/;"	v	class:CommandMotors
