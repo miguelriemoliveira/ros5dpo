@@ -12,9 +12,11 @@ from tf.transformations import euler_from_quaternion
 #from tf.transformations import quaternion
  
 def ReceiveUDP():
+    print "I am here"
     bdata = bytearray(4096)       
-    nbytes, sender = s.recvfrom_into(bdata, 4096)
-    #print "Received " + str(nbytes) + " bytes"
+    print "starting to receive"
+    nbytes, sender = s_receive.recvfrom_into(bdata, 100)
+    print "Received " + str(nbytes) + " bytes"
 
     l = list()
     l.append(str(bdata[0]))
@@ -118,7 +120,7 @@ class CommandMotors:
             bdata[9] = 0
             bdata[10] = 0
 
-            s.sendto(bdata , (HOST,SENDPORT))
+            s.sendto(bdata , (SENT_HOST,SENDPORT))
 
         print "EncAbs " + str(self.EncAbs)
         print "uint16 EncAbs " + str(np.uint16(self.EncAbs))
@@ -182,7 +184,8 @@ class CommandMotors:
 
             
 #Global Variables       
-HOST = '127.0.0.1'   # Symbolic name meaning all available interfaces
+LOCAL_HOST = '127.0.0.1'   # Symbolic name meaning all available interfaces
+SENT_HOST = '172.16.33.100'   # Symbolic name meaning all available interfaces
 PORT = 5000 # Arbitrary non-privileged port
 SENDPORT = 5001 # Arbitrary non-privileged port
 SENDPORT_POSE = 5002 # Arbitrary non-privileged port
@@ -194,26 +197,33 @@ odometry.EncAbs[1] = np.uint16(0);
 odometry.EncAbs[2] = np.uint16(0);
 
 s = socket.socket()
+s_receive = socket.socket()
 #s_send = socket.socket()
 pub = []
  
 def poseCallback(data):
     msg = []
+    msg.append(round(-data.pose.position.y,3))
     msg.append(round(data.pose.position.x,3))
-    msg.append(round(data.pose.position.y,3))
     #quaternion q
     q =  np.array([data.pose.orientation.x, data.pose.orientation.y, data.pose.orientation.z, data.pose.orientation.w])
     (roll,pitch,yaw) = euler_from_quaternion(q);
-    msg.append(round(yaw,3))
+    msg.append(round(yaw+3.14/2,3))
 
     msg_str = str(msg)
-    msg_str = msg_str[1:len(msg_str)-1]
-    s.sendto(msg_str , (HOST,SENDPORT_POSE))
+    if len(msg_str)>3:
+        msg_str = msg_str[1:len(msg_str)-1]
+
+    print msg_str
+    print SENT_HOST
+    print SENDPORT_POSE
+    #if not len(msg_str)==0:
+    s.sendto(msg_str, (SENT_HOST,SENDPORT_POSE))
 
 def ballPoseCallback(data):
     msg = []
+    msg.append(round(-data.pose.position.y,3))
     msg.append(round(data.pose.position.x,3))
-    msg.append(round(data.pose.position.y,3))
     #quaternion q
     q =  np.array([data.pose.orientation.x, data.pose.orientation.y, data.pose.orientation.z, data.pose.orientation.w])
     (roll,pitch,yaw) = euler_from_quaternion(q);
@@ -221,8 +231,8 @@ def ballPoseCallback(data):
 
     #Remove the first and last elements []
     msg_str = str(msg)
-    msg_str = msg_str[1:len(msg_str)-1]
-    s.sendto(msg_str , (HOST,SENDPORT_BALL))
+    #msg_str = msg_str[1:len(msg_str)-1]
+    s.sendto(msg_str , (SENT_HOST,SENDPORT_BALL))
 
 
 
@@ -292,13 +302,28 @@ def initUDP():
         sys.exit()
      
     # Bind socket to local host and port
-    try:
-        s.bind((HOST, PORT))
-    except socket.error , msg:
-        print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
+    #try:
+        #s.bind((LOCAL_HOST, PORT))
+    #except socket.error , msg:
+        #print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
         sys.exit()
          
     print 'Socket bind complete. Listen port=' + str(PORT) + " send port=" + str(SENDPORT) + " send port_pose=" + str(SENDPORT_POSE) + " send port_ball=" + str(SENDPORT_BALL) 
+
+    try :
+        global s_receive
+        s_receive = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        print 'Socket created'
+    except socket.error, msg :
+        print 'Failed to create socket. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
+        sys.exit()
+     
+    #Bind socket to local host and port
+    try:
+        #s_receive.bind((LOCAL_HOST, PORT))
+        s_receive.bind(('', PORT))
+    except socket.error , msg:
+        print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
 
     #try :
         #global s_send
@@ -348,11 +373,12 @@ def main():
     initUDP()
     
 
-    rate = rospy.Rate(100) 
+    rate = rospy.Rate(50) 
 
     while not rospy.is_shutdown():
 
         l = ReceiveUDP()
+        print "I am there"
             
         cmd_motors.UDPMsgToEncoded(l)
         cmd_motors.EncodedToW()
