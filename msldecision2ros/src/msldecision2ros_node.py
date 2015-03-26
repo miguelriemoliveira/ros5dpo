@@ -12,11 +12,11 @@ from tf.transformations import euler_from_quaternion
 #from tf.transformations import quaternion
  
 def ReceiveUDP():
-    print "I am here"
+    #print "I am here"
     bdata = bytearray(4096)       
-    print "starting to receive"
+    #print "starting to receive"
     nbytes, sender = s_receive.recvfrom_into(bdata, 100)
-    print "Received " + str(nbytes) + " bytes"
+    #print "Received " + str(nbytes) + " bytes"
 
     l = list()
     l.append(str(bdata[0]))
@@ -214,9 +214,9 @@ def poseCallback(data):
     if len(msg_str)>3:
         msg_str = msg_str[1:len(msg_str)-1]
 
-    print msg_str
-    print SENT_HOST
-    print SENDPORT_POSE
+    #print msg_str
+    #print SENT_HOST
+    #print SENDPORT_POSE
     #if not len(msg_str)==0:
     s.sendto(msg_str, (SENT_HOST,SENDPORT_POSE))
 
@@ -231,7 +231,8 @@ def ballPoseCallback(data):
 
     #Remove the first and last elements []
     msg_str = str(msg)
-    #msg_str = msg_str[1:len(msg_str)-1]
+    if len(msg_str)>3:
+        msg_str = msg_str[1:len(msg_str)-1]
     s.sendto(msg_str , (SENT_HOST,SENDPORT_BALL))
 
 
