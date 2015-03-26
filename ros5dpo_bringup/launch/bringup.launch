@@ -24,8 +24,4 @@
 
     </group>
 
-        <include file="$(find ros5dpo_bringup)/launch/visualize.launch">
-
-        </include>
-
 </launch>	

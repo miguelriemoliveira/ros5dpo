@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!-- Launches all 5 robots -->
+<launch>
+
+        <include file="$(find ros5dpo_bringup)/launch/bringup.launch">
+            <arg name="agent_id" value="1"/>
+        </include>
+
+        <include file="$(find ros5dpo_bringup)/launch/bringup.launch">
+            <arg name="agent_id" value="2"/>
+        </include>
+
+        <include file="$(find ros5dpo_bringup)/launch/bringup.launch">
+            <arg name="agent_id" value="3"/>
+        </include>
+
+        <include file="$(find ros5dpo_bringup)/launch/bringup.launch">
+            <arg name="agent_id" value="4"/>
+        </include>
+
+         <include file="$(find ros5dpo_bringup)/launch/bringup.launch">
+            <arg name="agent_id" value="5"/>
+        </include>
+
+        <include file="$(find ros5dpo_bringup)/launch/visualize.launch">
+        </include>
+
+</launch>	
