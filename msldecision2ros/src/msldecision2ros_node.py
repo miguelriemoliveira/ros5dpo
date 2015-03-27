@@ -12,9 +12,7 @@ from tf.transformations import euler_from_quaternion
 #from tf.transformations import quaternion
  
 def ReceiveUDP():
-    #print "I am here"
     bdata = bytearray(4096)       
-    #print "starting to receive"
     nbytes, sender = s_receive.recvfrom_into(bdata, 100)
     #print "Received " + str(nbytes) + " bytes"
 
@@ -358,6 +356,8 @@ def initROS():
 
     global PORT
     global SENDPORT 
+    global SENDPORT_POSE
+    global SENDPORT_BALL
     PORT = 5000 + (agent_number-1)*10
     SENDPORT = 5001  + (agent_number-1)*10
     SENDPORT_POSE = 5002  + (agent_number-1)*10
