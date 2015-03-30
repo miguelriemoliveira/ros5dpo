@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # license removed for brevity
 import rospy
+from math import sqrt
+from math import pow
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import PoseStamped
 from nav_msgs.msg import Odometry
@@ -198,8 +200,17 @@ s = socket.socket()
 s_receive = socket.socket()
 #s_send = socket.socket()
 pub = []
+robot_pose_x = 0
+robot_pose_y = 0
+max_ball_dist = 2
  
 def poseCallback(data):
+    global robot_pose_x 
+    global robot_pose_y 
+
+    robot_pose_x = data.pose.position.x;
+    robot_pose_y = data.pose.position.y;
+
     msg = []
     msg.append(round(-data.pose.position.y,3))
     msg.append(round(data.pose.position.x,3))
@@ -223,9 +234,16 @@ def ballPoseCallback(data):
     msg.append(round(-data.pose.position.y,3))
     msg.append(round(data.pose.position.x,3))
     #quaternion q
-    q =  np.array([data.pose.orientation.x, data.pose.orientation.y, data.pose.orientation.z, data.pose.orientation.w])
-    (roll,pitch,yaw) = euler_from_quaternion(q);
-    msg.append(round(yaw,3))
+    #q =  np.array([data.pose.orientation.x, data.pose.orientation.y, data.pose.orientation.z, data.pose.orientation.w])
+    #(roll,pitch,yaw) = euler_from_quaternion(q);
+
+    dist = math.sqrt(math.pow(robot_pose_x - round(data.pose.position.x,3),2) +
+            math.pow(robot_pose_y - round(data.pose.position.y,3),2))
+
+    if dist < max_ball_dist:
+        msg.append(1)
+    else:
+        msg.append(0)
 
     #Remove the first and last elements []
     msg_str = str(msg)
@@ -372,7 +390,9 @@ def initROS():
 def main():
     initROS()
     initUDP()
-    
+    global max_ball_dist
+    max_ball_dist = rospy.get_param('~max_ball_distance')   
+    print "max_ball_distance=" + str(max_ball_dist)
 
     rate = rospy.Rate(50) 
 

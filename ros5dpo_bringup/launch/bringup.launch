@@ -2,7 +2,7 @@
 <!-- -->
 <launch>
 <arg name="agent_id" default="1"/>
-<!--<env name="LUCKY_NUMBER" value="13" />-->
+<arg name="max_ball_distance" default="1"/>
 <env name="AGENT" value="$(arg agent_id)" />
 
     <group ns="$(arg agent_id)">
@@ -11,6 +11,7 @@
         </include>
 
         <include file="$(find msldecision2ros)/launch/msldecision2ros.launch">
+            <arg name="max_ball_distance" value="$(arg max_ball_distance)"/>
         </include>
 
            <!--Must use ~ in remappings so they are private-->
