@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 # license removed for brevity
 import rospy
 from math import sqrt
