@@ -3,23 +3,43 @@
 <launch>
 
         <include file="$(find ros5dpo_bringup)/launch/bringup.launch">
-            <arg name="agent_id" value="1"/>
+            <arg name="agent_number" value="1"/>
+            <arg name="local_ip_address" value="127.0.0.1"/>
+            <arg name="remote_ip_address" value="127.0.0.1"/>
+            <arg name="receive_port" value="5002"/>
+            <arg name="send_port" value="5003"/>
         </include>
 
         <include file="$(find ros5dpo_bringup)/launch/bringup.launch">
-            <arg name="agent_id" value="2"/>
+            <arg name="agent_number" value="2"/>
+            <arg name="local_ip_address" value="127.0.0.1"/>
+            <arg name="remote_ip_address" value="127.0.0.1"/>
+            <arg name="receive_port" value="5012"/>
+            <arg name="send_port" value="5013"/>
         </include>
 
         <include file="$(find ros5dpo_bringup)/launch/bringup.launch">
-            <arg name="agent_id" value="3"/>
+            <arg name="agent_number" value="3"/>
+            <arg name="local_ip_address" value="127.0.0.1"/>
+            <arg name="remote_ip_address" value="127.0.0.1"/>
+            <arg name="receive_port" value="5022"/>
+            <arg name="send_port" value="5023"/>
         </include>
 
         <include file="$(find ros5dpo_bringup)/launch/bringup.launch">
-            <arg name="agent_id" value="4"/>
+            <arg name="agent_number" value="4"/>
+            <arg name="local_ip_address" value="127.0.0.1"/>
+            <arg name="remote_ip_address" value="127.0.0.1"/>
+            <arg name="receive_port" value="5032"/>
+            <arg name="send_port" value="5033"/>
         </include>
 
-         <include file="$(find ros5dpo_bringup)/launch/bringup.launch">
-            <arg name="agent_id" value="5"/>
+        <include file="$(find ros5dpo_bringup)/launch/bringup.launch">
+            <arg name="agent_number" value="5"/>
+            <arg name="local_ip_address" value="127.0.0.1"/>
+            <arg name="remote_ip_address" value="127.0.0.1"/>
+            <arg name="receive_port" value="5042"/>
+            <arg name="send_port" value="5043"/>
         </include>
 
         <include file="$(find ros5dpo_bringup)/launch/visualize.launch">

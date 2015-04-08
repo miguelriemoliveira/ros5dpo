@@ -5,6 +5,7 @@ from math import sqrt
 from math import pow
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import PoseStamped
+from rtdb2ros.msg import RobotState
 from nav_msgs.msg import Odometry
 import socket
 import sys
@@ -24,6 +25,7 @@ def ReceiveUDP():
     for i in range(2,nbytes):
         l.append(str(bdata[i]))
 
+    print l
     return l      
 
 class CommandMotors:
@@ -185,7 +187,8 @@ class CommandMotors:
             
 #Global Variables       
 LOCAL_HOST = '127.0.0.1'   # Symbolic name meaning all available interfaces
-SENT_HOST = '172.16.33.100'   # Symbolic name meaning all available interfaces
+#SENT_HOST = '172.16.33.100'   # Symbolic name meaning all available interfaces
+SENT_HOST = '127.0.0.1'   # Symbolic name meaning all available interfaces
 PORT = 5000 # Arbitrary non-privileged port
 SENDPORT = 5001 # Arbitrary non-privileged port
 SENDPORT_POSE = 5002 # Arbitrary non-privileged port
@@ -204,6 +207,58 @@ robot_pose_x = 0
 robot_pose_y = 0
 max_ball_dist = 2
  
+def robotStateCallback(data):
+    print "I am in a robotStateCallback"
+    global robot_pose_x 
+    global robot_pose_y 
+
+    robot_pose_x = data.agent_pose.pose.position.x;
+    robot_pose_y = data.agent_pose.pose.position.y;
+
+    msg = []
+    msg.append(round(-data.agent_pose.pose.position.y,3))
+    msg.append(round(data.agent_pose.pose.position.x,3))
+    #quaternion q
+    q =  np.array([data.agent_pose.pose.orientation.x, data.agent_pose.pose.orientation.y, data.agent_pose.pose.orientation.z, data.agent_pose.pose.orientation.w])
+    (roll,pitch,yaw) = euler_from_quaternion(q);
+    msg.append(round(yaw+3.14/2,3))
+
+    #msg_str = str(msg)
+    #if len(msg_str)>3:
+        #msg_str = msg_str[1:len(msg_str)-1]
+
+    #print msg_str
+    #print SENT_HOST
+    #print SENDPORT_POSE
+    #if not len(msg_str)==0:
+    #s.sendto(msg_str, (SENT_HOST,SENDPORT_POSE))
+
+    ## FOR THE BALL
+    #msg = []
+    msg.append(round(-data.ball_pose.pose.position.y,3))
+    msg.append(round(data.ball_pose.pose.position.x,3))
+
+    dist = math.sqrt(math.pow(robot_pose_x - round(data.ball_pose.pose.position.x,3),2) +
+            math.pow(robot_pose_y - round(data.ball_pose.pose.position.y,3),2))
+
+    if dist < max_ball_dist:
+        msg.append(1)
+    else:
+        msg.append(0)
+    
+    if data.has_ball == 1:
+        msg.append(1)
+    else:
+        msg.append(0)
+
+
+    #Remove the first and last elements []
+    msg_str = str(msg)
+    if len(msg_str)>3:
+        msg_str = msg_str[1:len(msg_str)-1]
+    s.sendto(msg_str , (SENT_HOST,SENDPORT_BALL))
+
+
 def poseCallback(data):
     global robot_pose_x 
     global robot_pose_y 
@@ -365,11 +420,23 @@ def initROS():
     global pub
 
     rospy.init_node('msldecision2ros_node', anonymous=True)
-
-
     ns = rospy.get_namespace()
     print "namespace " + ns
-    agent_number = int(ns[1])
+    print "len " + str(len(ns))
+
+    agent_number = 1
+
+    if len(ns)>1:
+
+        try:
+            agent_number = int(ns[1])
+        except ValueError:
+            print 'Cannot define agent number from namespace. Using default 1'
+
+    else:
+        print 'Cannot define agent number from namespace. Using default 1'
+
+
     print "agent number " + str(agent_number)
 
     global PORT
@@ -384,8 +451,9 @@ def initROS():
 
     pub = rospy.Publisher('velocity_cmd', Twist, queue_size=10)
     rospy.Subscriber("odom", Odometry, odomCallback)
-    rospy.Subscriber("pose_agent", PoseStamped, poseCallback)
-    rospy.Subscriber("pose_ball", PoseStamped, ballPoseCallback)
+    #rospy.Subscriber("pose_agent", PoseStamped, poseCallback)
+    #rospy.Subscriber("pose_ball", PoseStamped, ballPoseCallback)
+    rospy.Subscriber("robot_state", RobotState, robotStateCallback)
  
 def main():
     initROS()
@@ -399,7 +467,6 @@ def main():
     while not rospy.is_shutdown():
 
         l = ReceiveUDP()
-        print "I am there"
             
         cmd_motors.UDPMsgToEncoded(l)
         cmd_motors.EncodedToW()
@@ -428,11 +495,6 @@ if __name__ == '__main__':
     except rospy.ROSInterruptException:
         pass
 
-
-
-
-
-                    
                 #def listener():
 
                         ## In ROS, nodes are uniquely named. If two nodes with

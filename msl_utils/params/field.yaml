@@ -1,0 +1,36 @@
+#AreaDepth_Text=2
+#AreaWidth_Text=6.25
+#CircleRadius_Text=1.875
+#CornerDist_Text=0.5625
+#CornerLinesDist_Text=0.5625
+#CornerLinesWidth_Text=0.125
+#Depth_Text=17.75
+#GoalDepth_Text=0.665
+#GoalWidth_Text=2.315
+#LinesWidth_Text=0.125
+#Width_Text=11.75
+#PoleSectionHeight_Text=0.05
+#BoundaryWidth_Text=14.76
+#BoundaryDepth_Text=20.76
+#KeeperAreaDepth_Text=0.5
+#KeeperAreaWidth_Text=3.25
+#fieldmag_Text=21
+#FField_Top=141
+#FField_Left=206
+
+#<fieldLength>17.875</fieldLength>                                                                             
+#<fieldWidth>11.375</fieldWidth>
+#<centerCircleRadius>1.875</centerCircleRadius>
+#<goalieAreaLength>0.625</goalieAreaLength>
+#<goalieAreaWidth>3.375</goalieAreaWidth>
+#<penaltyAreaLength>2.125</penaltyAreaLength>
+#<penaltyAreaWidth>6.375</penaltyAreaWidth>
+
+field_lenght_y: 17.875
+field_lenght_x: 11.375
+line_width: 0.125
+circle_radius: 1.875
+penalty_area_lenght_x: 6.25 
+penalty_area_lenght_y: 2
+goal_area_lenght_x: 2.315
+goal_area_lenght_y: 0.665

@@ -1,0 +1,4 @@
+std_msgs/Header header
+bool has_ball
+geometry_msgs/PoseStamped agent_pose
+geometry_msgs/PoseStamped ball_pose

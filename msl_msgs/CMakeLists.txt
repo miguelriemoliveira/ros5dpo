@@ -1,20 +1,16 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(rtdb2ros)
-
-set(CAMBADA_DIR "/home/mike/workingcopy/cambada-pub")
-#set(CAMBADA_DIR "/home/mike/workingcopy/cambada-pub-miguel")
+project(msl_msgs)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  rospy
+  genmsg
   std_msgs
   geometry_msgs
-  tf
 )
-
-find_package(catkin REQUIRED COMPONENTS roscpp std_msgs genmsg geometry_msgs tf)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -50,10 +46,11 @@ find_package(catkin REQUIRED COMPONENTS roscpp std_msgs genmsg geometry_msgs tf)
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-#add_message_files(
-  #FILES
-  #RobotState.msg
-#)
+add_message_files(
+  FILES
+  RobotStatus.msg
+  RobotCommand.msg
+)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -70,11 +67,11 @@ find_package(catkin REQUIRED COMPONENTS roscpp std_msgs genmsg geometry_msgs tf)
 # )
 
 ## Generate added messages and services with any dependencies listed here
-#generate_messages(
-  #DEPENDENCIES
-  #std_msgs
-  #geometry_msgs
-#)
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+  geometry_msgs
+)
 
 ###################################
 ## catkin specific configuration ##
@@ -87,8 +84,8 @@ find_package(catkin REQUIRED COMPONENTS roscpp std_msgs genmsg geometry_msgs tf)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES rtdb2ros
-#  CATKIN_DEPENDS roscpp std_msgs
+#  LIBRARIES msl_msgs
+#  CATKIN_DEPENDS roscpp rospy std_msgs
 #  DEPENDS system_lib
 )
 
@@ -96,53 +93,29 @@ catkin_package(
 ## Build ##
 ###########
 
-#include_directories(
-  #${catkin_INCLUDE_DIRS}
-#)
-
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
-  ${CAMBADA_DIR}/src/libs/rtdb/
-  ${CAMBADA_DIR}/src/libs/pman/
-  ${CAMBADA_DIR}/src/agent/
-  ${CAMBADA_DIR}/src/agent/strategy/
-  ${CAMBADA_DIR}/src/agent/world/
-  ${CAMBADA_DIR}/src/agent/integrator/
-  ${CAMBADA_DIR}/src/agent/integrator/filters/
-  ${CAMBADA_DIR}/src/agent/roles/
-  ${CAMBADA_DIR}/src/agent/behaviours/
-  ${CAMBADA_DIR}/src/geom/
-  ${CAMBADA_DIR}/src/util/
-  ${CAMBADA_DIR}/src/
-  ${CAMBADA_DIR}/build/src/util/
-  ${CAMBADA_DIR}/src/libs/libtcod-1.5.1/include/
 )
 
 ## Declare a cpp library
-# add_library(rtdb2ros
-#   src/${PROJECT_NAME}/rtdb2ros.cpp
+# add_library(msl_msgs
+#   src/${PROJECT_NAME}/msl_msgs.cpp
 # )
 
 ## Declare a cpp executable
-# add_executable(rtdb_ros_translator_node src/rtdb_ros_translator_node.cpp)
-add_executable(rtdb2ros_node src/rtdb2ros_node.cpp)
+# add_executable(msl_msgs_node src/msl_msgs_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(rtdb_ros_translator_node rtdb_ros_translator_generate_messages_cpp)
-
-#link_directories(/home/mike/workingcopy/cambada-pub/lib/) 
+# add_dependencies(msl_msgs_node msl_msgs_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(rtdb2ros_node
-  ${catkin_LIBRARIES}
-  ${CAMBADA_DIR}/lib/librtdb.a
-  ${CAMBADA_DIR}/lib/libworldstate.a
-)
-
+# target_link_libraries(msl_msgs_node
+#   ${catkin_LIBRARIES}
+# )
 
 #############
 ## Install ##
@@ -159,7 +132,7 @@ target_link_libraries(rtdb2ros_node
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS rtdb_ros_translator rtdb_ros_translator_node
+# install(TARGETS msl_msgs msl_msgs_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -184,12 +157,10 @@ target_link_libraries(rtdb2ros_node
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_rtdb_ros_translator.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_msl_msgs.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-
-MESSAGE("\n\n\nPath to cambada-pub directory \n\n\n" ${CAMBADA_DIR})

@@ -1,18 +1,23 @@
 <?xml version="1.0"?>
 <!-- Launches a race_3d_tracking node or nodelet. All possible parameters are listed below to serve as an example -->
 <launch>
-<arg name="max_ball_distance" default="1"/>
+<arg name="agent_number" default="1"/>
+<arg name="max_ball_distance" default="2"/>
+<arg name="local_ip_address" default="127.0.0.1"/>
+<arg name="remote_ip_address" default="127.0.0.1"/>
+<arg name="receive_port" default="5002"/>
+<arg name="send_port" default="5003"/>
 
-    <node pkg="msldecision2ros" type="msldecision2ros_node.py" name="msldecision2ros_node" output="screen">
+
+    <node pkg="msldecision2ros" type="msldecision2ros_new_protocol_node.py" name="msldecision2ros_node" output="screen">
+        <param name="agent_number" value="$(arg agent_number)"/>
         <param name="max_ball_distance" value="$(arg max_ball_distance)"/>
-
-       <!--Must use ~ in remappings so they are private-->
-    <!--<remap from="~point_cloud_in_topic" to="$(arg point_cloud_in_topic)"/>-->
-    <!--<remap from="~parent_frame_id" to="$(arg parent_frame_id)"/>-->
-
-    <!--param loading-->
-    <!--<param name="initial_object_pc_path" value="$(arg initial_object_pc_path)"/>-->
-    <!--<param name="~point_cloud_in_topic" value="$(arg point_cloud_in_topic)"/>-->
-    <!--<rosparam command="load" file="$(find race_3d_object_tracking)/params/default_params.yaml" />-->
+        <param name="local_ip_address" value="$(arg local_ip_address)"/>
+        <param name="remote_ip_address" value="$(arg remote_ip_address)"/>
+        <param name="receive_port" value="$(arg receive_port)"/>
+        <param name="send_port" value="$(arg send_port)"/>
     </node>
+
+    <!--<node pkg="msldecision2ros" type="msldecision2ros_node.py" name="msldecision2ros_node" output="screen">-->
+        <!--<param name="max_ball_distance" value="$(arg max_ball_distance)"/>-->
 </launch>	

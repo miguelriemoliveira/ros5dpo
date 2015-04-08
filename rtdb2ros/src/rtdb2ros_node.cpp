@@ -6,6 +6,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
+#include <msl_msgs/RobotStatus.h>
 
 //Cambada includes
 #include "Robot.h"
@@ -53,6 +54,7 @@ geometry_msgs::PoseStamped ball_ps; //a ros format odom
 ros::Publisher odometry_pub;
 ros::Publisher pose_pub;
 ros::Publisher ball_pose_pub;
+ros::Publisher robot_status_pub;
 
 /**
  * @brief Receives a velocity command for agent X and writes that to the rtdb
@@ -76,6 +78,9 @@ void velocityCommandCallback(const geometry_msgs::Twist::ConstPtr& msg)
  */
 void timerCallback(const ros::TimerEvent& event)
 {
+    msl_msgs::RobotStatus rs;
+    ros::Time t = ros::Time::now();
+
 	//Read from rtdb the position and the velocity
 	CMD_Pos odom;
 	DB_get(agent_id, CMD_POS, (void*)&odom);
@@ -86,60 +91,53 @@ void timerCallback(const ros::TimerEvent& event)
 	VisionInfo vi;
 	DB_get(agent_id, VISION_INFO, (void*)&vi);
 
+    unsigned int lArm;
+    unsigned int rArm;
+    bool lHandicap;
+    bool rHandicap;
+    CMD_Grabber_Info_GET(&lArm, &rArm, &lHandicap, &rHandicap);
+
+    if (lArm>0 && rArm>0)
+    {
+        rs.has_ball = true;
+    }
+    else
+    {
+        rs.has_ball = false;
+    }
+
+    ROS_INFO("GRABBER agent %d: lArm= %d rArm=%d lH=%d rH=%d", agent_id, lArm, rArm, lHandicap, rHandicap);
+
     //ROS_INFO("agent_id = %d ", agent_id);
 	//ROS_INFO("Reading VIS_INFO position x=%f y=%f a=%f", vi.position[0], vi.position[1], vi.position[2]);
 
     //Fill the pose stamped msg and publish
-    ps.header.frame_id = "/soccer_field";
-    ps.header.stamp = ros::Time::now();
+    ps.header.frame_id = "/world";
+    ps.header.stamp = t;
     ps.pose.position.x = vi.sim_agent_position[0];
     ps.pose.position.y = vi.sim_agent_position[1];
     ps.pose.orientation = tf::createQuaternionMsgFromYaw(vi.sim_agent_position[2] + M_PI/2);
     pose_pub.publish(ps);
 
+
     //Fill the pose stamped msg and publish
-    ball_ps.header.frame_id = "/soccer_field";
-    ball_ps.header.stamp = ros::Time::now();
+    ball_ps.header.frame_id = "/world";
+    ball_ps.header.stamp = t;
     ball_ps.pose.position.x = vi.sim_ball_position[0];
     ball_ps.pose.position.y = vi.sim_ball_position[1];
     ball_pose_pub.publish(ball_ps);
 
-	//ROS_INFO("Reading odom position x=%f y=%f a=%f", odom.px, odom.py, odom.pa);
-	//ROS_INFO("Reading odom dposition x=%f y=%f a=%f", odom.dx, odom.dy, odom.da);
-	//ROS_INFO("Reading odom velocity x=%f y=%f a=%f", vel.vx, vel.vy, vel.va);
+    rs.agent_pose = ps;
+    rs.ball_pose = ball_ps;
+    robot_status_pub.publish(rs);
 
-    //Convert back to Cambada's coordinate frame
-    //double ox = odom.py;
-    //double oy = -odom.px;
-
-       
-	////Publish ros odom message
-	//ro.header.stamp = ros::Time::now(); //TODO discuss with Heber about this
-	//ro.header.frame_id = frame_id;
-	//ro.child_frame_id = child_frame_id;
-    //double x = odom.py;
-    //double y = -odom.px;
-	//ro.pose.pose.position.x = x; //cos(odom.pa)*x + sin(odom.pa)*y;
-	//ro.pose.pose.position.y = y; //-sin(odom.pa)*x + cos(odom.pa)*y;
-	////ro.pose.pose.position.x = odom.py;
-	////ro.pose.pose.position.y = -odom.px;
-    ////geometry_msgs::Quaternion q = tf::createQuaternionMsgFromYaw(odom.pa+M_PI/2);
-    //geometry_msgs::Quaternion q = tf::createQuaternionMsgFromYaw(odom.pa);
-	//ro.pose.pose.orientation = q;
-	////ro.pose.pose.orientation.z = odom.pa;
-	//ro.twist.twist.linear.x = vel.vx;
-	//ro.twist.twist.linear.y = vel.vy;
-	//ro.twist.twist.angular.z = vel.va;
-
-	//odometry_pub.publish(ro);	
-
-	//static tf::TransformBroadcaster br;
-	//tf::Transform transform;
-	//transform.setOrigin(tf::Vector3(odom.px, odom.py, 0.0));
-	//tf::Quaternion qtf;
-	//qtf.setRPY(0, 0, odom.pa);
-	//transform.setRotation(qtf);
-	//br.sendTransform(tf::StampedTransform(transform, ro.header.stamp, frame_id, child_frame_id));
+	static tf::TransformBroadcaster br;
+    tf::Transform transform;
+    transform.setOrigin(tf::Vector3(ps.pose.position.x, ps.pose.position.y, ps.pose.position.z));
+    tf::Quaternion qtf;
+    qtf.setRPY(0, 0, odom.pa);
+    transform.setRotation(qtf);
+    br.sendTransform(tf::StampedTransform(transform, t, frame_id, child_frame_id));
 
 }
 
@@ -168,8 +166,7 @@ int main(int argc, char **argv)
 	ros::NodeHandle n;
 
 	//Compute the frame_id and child frame_id names
-	frame_id = "/odom_";
-	frame_id.append(pname);
+	frame_id = "/world";
 	child_frame_id = "/base_footprint_";
 	child_frame_id.append(pname);
 
@@ -181,7 +178,8 @@ int main(int argc, char **argv)
 	std::string ball_pose_stamped_topic = "pose_ball";
 	ball_pose_pub = n.advertise<geometry_msgs::PoseStamped>(ball_pose_stamped_topic, 100);
 
-
+	std::string robot_status_topic = "robot_status";
+	robot_status_pub = n.advertise<msl_msgs::RobotStatus>(robot_status_topic, 100);
 
 	//Configure the publisher of odometry
 	std::string odom_topic = "odom";

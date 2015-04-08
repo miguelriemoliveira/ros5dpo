@@ -1,5 +1,18 @@
 <?xml version="1.0"?>
 <launch>
+
+<group ns="/field">
+    <rosparam command="load" file="$(find msl_utils)/params/field.yaml" />
+</group>
+<group ns="/agent">
+    <rosparam command="load" file="$(find msl_utils)/params/agent.yaml" />
+</group>
+
+
+
+    <node name="field_marker_publisher" pkg="msl_utils" type="field_marker_publisher.py" required="true" output="screen">
+    </node>
+
     <node name="rviz" pkg="rviz" type="rviz" args="--display-config $(find ros5dpo_bringup)/config/soccer_field.rviz" required="true">
         </node>
 </launch>
