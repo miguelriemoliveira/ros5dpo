@@ -20,8 +20,9 @@ import rospy
 ## GLOBAL VARIABLES ##
 
 g_local_ip_address = '127.0.0.1'   # Symbolic name meaning all available interfaces
-#g_remote_ip_address = '172.16.33.100'   # Symbolic name meaning all available interfaces
-g_remote_ip_address = '127.0.0.1'   # Symbolic name meaning all available interfaces
+#g_remote_ip_address = '172.16.33.107'   # Symbolic name meaning all available interfaces
+g_remote_ip_address = '192.0.0.1'   # Symbolic name meaning all available interfaces
+#g_remote_ip_address = '127.0.0.1'   # Symbolic name meaning all available interfaces
 g_receive_port = 5002 # Arbitrary non-privileged port
 g_send_port = 5003 # Arbitrary non-privileged port
 s = socket.socket()
@@ -33,12 +34,9 @@ g_agent_number = 1
 
 def ReceiveUDP():
     data, addr = s_receive.recvfrom(1024)
-
-
     return data
  
 def robotStatusCallback(data):
-    print "I am in a robotStatusCallback"
 
     ## FOR THE AGENT
     msg = []
@@ -73,6 +71,7 @@ def robotStatusCallback(data):
     msg_str = str(msg)
     if len(msg_str)>3:
         msg_str = msg_str[1:len(msg_str)-1]
+
     s.sendto(msg_str , (g_remote_ip_address,g_send_port))
 
     ##
@@ -80,7 +79,9 @@ def robotStatusCallback(data):
     #
     # @return 
 def initUDP():
-    
+    global g_receive_port
+    global g_send_port
+
     #Configure sending socket
     try :
         global s
@@ -123,15 +124,15 @@ def initROS():
     g_local_ip_address = rospy.get_param('~local_ip_address')   
     print "local_ip_address=" + str(g_local_ip_address)
 
-    global remote_ip_address
+    global g_remote_ip_address
     g_remote_ip_address = rospy.get_param('~remote_ip_address')   
     print "remote_ip_address=" + str(g_remote_ip_address)
 
-    global receive_port
+    global g_receive_port
     g_receive_port = rospy.get_param('~receive_port')   
     print "receive_port=" + str(g_receive_port)
 
-    global send_port
+    global g_send_port
     g_send_port = rospy.get_param('~send_port')   
     print "send_port=" + str(g_send_port)
 

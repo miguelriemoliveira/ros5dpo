@@ -2,12 +2,11 @@
 <!-- -->
 <launch>
 <arg name="agent_number" default="1"/>
-<arg name="max_ball_distance" default="1"/>
+<arg name="max_ball_distance" default="3"/>
 <arg name="local_ip_address" default="127.0.0.1"/>
 <arg name="remote_ip_address" default="127.0.0.1"/>
 <arg name="receive_port" default="5002"/>
 <arg name="send_port" default="5003"/>
-
 
 <env name="AGENT" value="$(arg agent_number)" />
 

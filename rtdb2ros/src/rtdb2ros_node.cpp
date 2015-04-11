@@ -7,6 +7,7 @@
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
 #include <msl_msgs/RobotStatus.h>
+#include <msl_msgs/RobotCommand.h>
 
 //Cambada includes
 #include "Robot.h"
@@ -69,6 +70,26 @@ void velocityCommandCallback(const geometry_msgs::Twist::ConstPtr& msg)
     //y <-  x  Cambadas y is in front
     //y = x
 	CMD_Vel_SET(-msg->linear.y, msg->linear.x, msg->angular.z,false);
+}
+
+void robotCommandCallback(const msl_msgs::RobotCommand::ConstPtr& msg)
+{
+	ROS_INFO("Received robot_command %f %f %f", msg->velocity.linear.x, msg->velocity.linear.y, msg->velocity.angular.z);
+    //Cambada coordinate frames is different, so must operate a transform
+    //x <- -y  Cambada's x is to the left
+    //y <-  x  Cambadas y is in front
+    //y = x
+	CMD_Vel_SET(-msg->velocity.linear.y, msg->velocity.linear.x, msg->velocity.angular.z,false);
+    CMD_Kicker_SET(msg->kick_power); 
+
+    if (msg->grabber_left_speed > 0 || msg->grabber_right_speed > 0)
+    {
+        CMD_Grabber_SET(GRABBER_DEFAULT);
+    }
+    else
+    {
+        CMD_Grabber_SET(GRABBER_OFF);
+    }
 }
 
 /**
@@ -189,13 +210,16 @@ int main(int argc, char **argv)
 	std::string velocity_cmd_topic = "velocity_cmd";
 	ros::Subscriber sub = n.subscribe(velocity_cmd_topic, 100, velocityCommandCallback);
 
+	//Configure subscriber to robot_command
+	std::string robot_cmd_topic = "robot_command";
+	ros::Subscriber sub_robot_command = n.subscribe(robot_cmd_topic, 100, robotCommandCallback);
+
 	//Configure a timer callback that regularly reads the odometry position
 	//ros::Timer timer = n.createTimer(ros::Duration(0.05), timerCallback);
 	ros::Timer timer = n.createTimer(ros::Duration(0.1), timerCallback);
     //std::
 
     std::string node_name = ros::this_node::getName();
-
 
 	ROS_INFO("Starting %s", node_name.c_str());
 	ROS_INFO("Agent id %d", agent_id);
