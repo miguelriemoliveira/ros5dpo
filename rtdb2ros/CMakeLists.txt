@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(rtdb2ros)
 
-set(CAMBADA_DIR "/home/mike/workingcopy/cambada-pub")
+set(CAMBADA_DIR "/home/mike/workingcopy/cambada-pub-original")
 #set(CAMBADA_DIR "/home/mike/workingcopy/cambada-pub-miguel")
 
 ## Find catkin macros and libraries
@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   geometry_msgs
   tf
+  msl_msgs
 )
 
 find_package(catkin REQUIRED COMPONENTS roscpp std_msgs genmsg geometry_msgs tf)
